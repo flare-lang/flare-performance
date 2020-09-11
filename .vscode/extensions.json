@@ -1,0 +1,11 @@
+// Reference: https://code.visualstudio.com/docs/editor/extension-gallery#_workspace-recommended-extensions
+
+{
+    "recommendations": [
+        "DavidAnson.vscode-markdownlint",
+        "EditorConfig.EditorConfig",
+        "GitHub.vscode-pull-request-github",
+        "hashhar.gitattributes",
+        "redhat.vscode-yaml"
+    ]
+}
