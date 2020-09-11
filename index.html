@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="initial-scale=1, shrink-to-fit=no, width=device-width">
+
+        <link rel="stylesheet"
+              crossorigin="anonymous"
+              integrity="sha512-/zs32ZEJh+/EO2N1b0PEdoA10JkdC3zJ8L5FTiQu82LR9S/rOQNfQN7U59U9BC12swNeRAz3HSzIL2vpp4fv3w=="
+              href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css" />
+        <link rel="stylesheet"
+              crossorigin="anonymous"
+              integrity="sha512-YjfrOR3ZCJt6xtVn6J6O/CkcCkR1pSZgva/yScp7pq9cc25tWZRtVdKHMoz1T5au89zWfRO+lwMBk+n+bCzsjQ=="
+              href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.2/slate/bootstrap.min.css" />
+
+        <style>
+            canvas
+            {
+                margin-top: 50px;
+            }
+        </style>
+
+        <title>Flare Programming Language Benchmarks</title>
+    </head>
+    <body class="d-flex justify-content-center">
+        <div class="card w-75">
+            <div class="card-body">
+                <header class="card-title">
+                    <h1 class="text-center">
+                        Flare Programming Language Benchmarks
+                    </h1>
+                </header>
+
+                <main class="card-body">
+                </main>
+            </div>
+        </div>
+
+        <script crossorigin="anonymous"
+                integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg=="
+                src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+        <script crossorigin="anonymous"
+                integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+                src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script crossorigin="anonymous"
+                integrity="sha512-eUQ9hGdLjBjY3F41CScH3UX+4JDSI9zXeroz7hJ+RteoCaY+GP/LDoM8AO+Pt+DRFw3nXqsjh9Zsts8hnYv8/A=="
+                src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.4.4/umd/popper.min.js"></script>
+        <script crossorigin="anonymous"
+                integrity="sha512-M5KW3ztuIICmVIhjSqXe01oV2bpe248gOxqmlcYrEzAvws7Pw3z6BK0iGbrwvdrUQUhi3eXgtxp5I8PDo9YfjQ=="
+                src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+        <script>
+            'use strict';
+
+            async function run()
+            {
+                const resp1 = await fetch("reports.json");
+                const entries = await resp1.json();
+                const data = new Map();
+
+                for (const entry of entries)
+                {
+                    for (const report of entry.Reports)
+                    {
+                        const result =
+                        {
+                            Timestamp: entry.Timestamp,
+                            Commit: entry.Commit,
+                            Report: report,
+                        };
+
+                        let arr = data.get(report.Name);
+
+                        if (arr !== undefined)
+                            arr.push(result);
+                        else
+                            data.set(report.Name, [result]);
+                    }
+                }
+
+                const main = $("main");
+                const resp2 = await fetch("metadata.json");
+                const metadata = await resp2.json();
+
+                for (const [name, results] of data)
+                {
+                    const canvas = $("<canvas>");
+
+                    main.append(canvas);
+
+                    new Chart(canvas,
+                    {
+                        type: "line",
+                        data:
+                        {
+                            labels: results.map(r => r.Commit.Hash.slice(0, 7)),
+                            datasets:
+                            [
+                                {
+                                    label: name,
+                                    data: results.map(r => r.Report.Statistics.Mean),
+                                    pointRadius: 10,
+                                    pointHoverRadius: 10,
+                                    borderColor: "#178600",
+                                    backgroundColor: "#17860020",
+                                    hoverBackgroundColor: "#17860000",
+                                },
+                            ],
+                        },
+                        options:
+                        {
+                            legend:
+                            {
+                                labels:
+                                {
+                                    fontSize: 18,
+                                    fontColor: "#ccd5dc",
+                                },
+                            },
+                            scales:
+                            {
+                                xAxes:
+                                [
+                                    {
+                                        scaleLabel:
+                                        {
+                                            display: true,
+                                            labelString: "commit",
+                                            fontSize: 14,
+                                            fontColor: "#ccd5dc",
+                                        },
+                                        ticks:
+                                        {
+                                            fontSize: 14,
+                                            fontColor: "#ccd5dc",
+                                        },
+                                        gridLines:
+                                        {
+                                            color: "#5f5f5f",
+                                        },
+                                    },
+                                ],
+                                yAxes:
+                                [
+                                    {
+                                        scaleLabel:
+                                        {
+                                            display: true,
+                                            labelString: "µs",
+                                            fontSize: 14,
+                                            fontColor: "#ccd5dc",
+                                        },
+                                        ticks:
+                                        {
+                                            beginAtZero: true,
+                                            fontSize: 14,
+                                            fontColor: "#ccd5dc",
+                                        },
+                                        gridLines:
+                                        {
+                                            color: "#5f5f5f",
+                                        },
+                                    },
+                                ],
+                            },
+                            tooltips:
+                            {
+                                intersect: false,
+                                titleFontSize: 18,
+                                titleFontColor: "#ccd5dc",
+                                bodyFontSize: 14,
+                                bodyFontColor: "#bfbfbf",
+                                footerFontSize: 16,
+                                footerFontColor: "#b0b0b0",
+                                backgroundColor: "#202020",
+                                borderWidth: 1,
+                                borderColor: "#a0a0a0",
+                                displayColors: false,
+                                callbacks:
+                                {
+                                    title: items =>
+                                    {
+                                        const commit = results[items[0].index].Commit;
+
+                                        return `${commit.Hash.slice(0, 7)}: ${commit.Subject}`;
+                                    },
+                                    beforeBody: items =>
+                                    {
+                                        const result = results[items[0].index];
+                                        const commit = result.Commit;
+                                        const author = commit.Author;
+                                        const committer = commit.Committer;
+                                        const stats = result.Report.Statistics;
+
+                                        return `Authored by ${author.Name} <${author.MailAddress}>\n` +
+                                               `${new Date(parseInt(author.Timestamp))}\n\n` +
+                                               `Committed by ${committer.Name} <${committer.MailAddress}>\n` +
+                                               `${new Date(parseInt(committer.Timestamp))}`;
+                                    },
+                                    label: item => "",
+                                    footer: items =>
+                                    {
+                                        const stats = results[items[0].index].Report.Statistics;
+
+                                        return `Mean: ${stats.Mean} µs\n` +
+                                               `StdErr: ${stats.StdErr} µs\n` +
+                                               `StdDev: ${stats.StdDev} µs\n` +
+                                               `Min: ${stats.Min} µs\n` +
+                                               `Median: ${stats.Median} µs\n` +
+                                               `Max: ${stats.Max} µs\n` +
+                                               `Iterations: ${stats.Iterations}\n` +
+                                               `Op/s: ${stats.OperationsPerSecond}`;
+                                    },
+                                },
+                            },
+                            onClick: (_, elems) =>
+                            {
+                                if (elems.length === 0)
+                                    return;
+
+                                const hash = results[elems[0]._index].Commit.Hash;
+
+                                window.open(
+                                    `https://github.com/${metadata.Owner}/${metadata.Repository}/commit/${hash}`,
+                                    `_blank`);
+                            },
+                        },
+                    });
+                }
+            }
+
+            $(document).ready(run);
+        </script>
+    </body>
+</html>
