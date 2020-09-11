@@ -20,5 +20,5 @@ jobs:
                   git config --global user.name github-actions
                   git config --global user.email bot@flare-lang.org
                   git checkout origin/live -b live
-                  git reset $(git log master --oneline --reverse | head -n 1) --hard
+                  git reset $(git log master --oneline --reverse --format=%H | head -n 1) --hard
                   git push origin live -f
