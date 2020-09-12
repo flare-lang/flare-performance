@@ -38,9 +38,9 @@ jobs:
                   sha=$(git -C flare show -s --format=%H)
                   echo ::set-output name=sha::$sha
                   git checkout origin/live -b live
-                  mv BenchmarkDotNet.Artifacts/results/Flare.Benchmarks.FlareBenchmark-environment.json environment.json
+                  jq . BenchmarkDotNet.Artifacts/results/Flare.Benchmarks.FlareBenchmark-environment.json > environment.json
                   echo ::set-output name=changed::$(git diff --quiet environment.json; echo $?)
-                  jq --slurpfile data BenchmarkDotNet.Artifacts/results/Flare.Benchmarks.FlareBenchmark-report.json ". += \$data" reports.json > new.json
+                  jq ". += \$data" reports.json --slurpfile data BenchmarkDotNet.Artifacts/results/Flare.Benchmarks.FlareBenchmark-report.json > new.json
                   mv new.json reports.json
                   git add environment.json reports.json
                   git commit -m "CI: Benchmarks for $sha."
