@@ -24,49 +24,42 @@ jobs:
             - name: Clone main repository
               run: |
                   git clone git://github.com/${{ github.repository_owner }}/flare.git
-            - name: Extract Git metadata
-              id: metadata
-              run: |
-                  echo ::set-output name=sha::$(git -C flare show -s --format=%H)
-                  echo ::set-output name=timestamp::$(git -C flare show -s --format=%ci)
-                  echo ::set-output name=message::$(git -C flare show -s --format=%s)
-                  echo ::set-output name=author_name::$(git -C flare show -s --format=%aN)
-                  echo ::set-output name=author_email::$(git -C flare show -s --format=%aE)
-                  echo ::set-output name=committer_name::$(git -C flare show -s --format=%cN)
-                  echo ::set-output name=committer_email::$(git -C flare show -s --format=%cE)
             - name: Run benchmarks
               run: |
-                  dotnet run -p flare/src/bench -c Release -- -j
-            - name: Set Git identity
+                  dotnet run -p flare/src/bench -c Release -- -e
+            - name: Update benchmark data
+              id: update
               run: |
                   git config --global user.name github-actions
                   git config --global user.email bot@flare-lang.org
-            - name: Process benchmark results
-              uses: alexrp/github-action-benchmark@flare
+                  sha=$(git -C flare show -s --format=%H)
+                  echo ::set-output name=sha::$sha
+                  git checkout origin/live -b live
+                  mv BenchmarkDotNet.Artifacts/results/Flare.Benchmarks.FlareBenchmark-report.json environment.json
+                  echo ::set-output name=changed::$(git diff --quiet environment.json; echo $?)
+                  jq --slurpfile data BenchmarkDotNet.Artifacts/results/Flare.Benchmarks.FlareBenchmark-report.json ". += \$data" reports.json > new.json
+                  mv new.json reports.json
+                  git add environment.json reports.json
+                  git commit -m "CI: Benchmarks for $sha."
+                  echo ::set-output name=result::$(git show -s --format=%H)
+                  git push origin live
+            - name: Notify Discord (environment)
+              if: github.repository == 'flare-lang/flare-performance' && steps.update.outputs.changed == '1'
+              uses: hugoalh/GitHubAction.SendToDiscord@v1.1.6
               with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
-                  gh-pages-branch: live
-                  name: Flare Programming Language
-                  no-commit-event: true
-                  commit-sha: ${{ steps.metadata.outputs.sha }}
-                  commit-timestamp: ${{ steps.metadata.outputs.timestamp }}
-                  commit-message: ${{ steps.metadata.outputs.message }}
-                  commit-author-name: ${{ steps.metadata.outputs.author_name }}
-                  commit-author-email: ${{ steps.metadata.outputs.author_email }}
-                  commit-committer-name: ${{ steps.metadata.outputs.committer_name }}
-                  commit-committer-email: ${{ steps.metadata.outputs.committer_email }}
-                  commit-url: https://github.com/${{ github.repository_owner }}/flare/commit/${{ steps.metadata.outputs.sha }}
-                  tool: benchmarkdotnet
-                  output-file-path: BenchmarkDotNet.Artifacts/results/Flare.Benchmarks.FlareBenchmark-report-full.json
-                  benchmark-data-dir-path: ""
-                  no-git-config: true
-                  auto-push: true
-            - name: Notify Discord
+                  webhook_id: ${{ secrets.DISCORD_BENCHMARKS_ID }}
+                  webhook_token: ${{ secrets.DISCORD_BENCHMARKS_TOKEN }}
+                  message_embed_title: "Benchmarks: Environment"
+                  message_embed_titleurl: https://github.com/${{ github.repository }}/commit/${{ steps.update.outputs.result }}
+                  message_embed_description: The GitHub Actions environment appears to have changed. Benchmark history may need to be reset.
+            - name: Notify Discord (completion)
               if: github.repository == 'flare-lang/flare-performance'
               uses: hugoalh/GitHubAction.SendToDiscord@v1.1.6
               with:
                   webhook_id: ${{ secrets.DISCORD_BENCHMARKS_ID }}
                   webhook_token: ${{ secrets.DISCORD_BENCHMARKS_TOKEN }}
-                  message_embed_title: Benchmarks
+                  message_embed_author: ${{ steps.update.outputs.sha }}
+                  message_embed_authorurl: https://github.com/${{ github.repository_owner }}/flare/commit/${{ steps.update.outputs.sha }}
+                  message_embed_title: "Benchmarks: Completed"
                   message_embed_titleurl: https://performance.flare-lang.org
                   message_embed_description: Benchmark run has completed successfully.
