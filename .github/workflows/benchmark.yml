@@ -38,11 +38,12 @@ jobs:
                   sha=$(git -C flare show -s --format=%H)
                   echo ::set-output name=sha::$sha
                   git checkout origin/live -b live
+                  echo "{ \"Owner\": \"${{ github.repository_owner }}\", \"Repository\": \"flare\" }" | jq . > metadata.json
                   jq . BenchmarkDotNet.Artifacts/results/Flare.Benchmarks.FlareBenchmark-environment.json > environment.json
                   echo ::set-output name=changed::$(git diff --quiet environment.json; echo $?)
                   jq ". += \$data" reports.json --slurpfile data BenchmarkDotNet.Artifacts/results/Flare.Benchmarks.FlareBenchmark-report.json > new.json
                   mv new.json reports.json
-                  git add environment.json reports.json
+                  git add environment.json metadata.json reports.json
                   git commit -m "CI: Benchmarks for $sha."
                   echo ::set-output name=result::$(git show -s --format=%H)
                   git push origin live
@@ -61,7 +62,7 @@ jobs:
               with:
                   webhook_id: ${{ secrets.DISCORD_BENCHMARKS_ID }}
                   webhook_token: ${{ secrets.DISCORD_BENCHMARKS_TOKEN }}
-                  message_embed_author: ${{ steps.update.outputs.sha }}
+                  message_embed_authorname: ${{ steps.update.outputs.sha }}
                   message_embed_authorurl: https://github.com/${{ github.repository_owner }}/flare/commit/${{ steps.update.outputs.sha }}
                   message_embed_title: "Benchmarks: Completed"
                   message_embed_titleurl: https://performance.flare-lang.org
