@@ -22,3 +22,12 @@ jobs:
                   git checkout origin/live -b live
                   git reset $(git log --oneline --reverse --format=%H | head -n 1) --hard
                   git push origin live -f
+            - name: Notify Discord
+              if: github.repository == 'flare-lang/flare-performance'
+              uses: hugoalh/GitHubAction.SendToDiscord@v1.1.6
+              with:
+                  webhook_id: ${{ secrets.DISCORD_BENCHMARKS_ID }}
+                  webhook_token: ${{ secrets.DISCORD_BENCHMARKS_TOKEN }}
+                  message_embed_title: "Benchmarks: Reset"
+                  message_embed_titleurl: https://performance.flare-lang.org
+                  message_embed_description: Benchmark history has been reset.
