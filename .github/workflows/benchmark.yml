@@ -20,13 +20,17 @@ jobs:
             - name: Fetch full history
               run: |
                   git fetch origin --unshallow
-            - name: Set up .NET
-              uses: actions/setup-dotnet@v1.6.0
-              with:
-                  dotnet-version: 5.0.100-preview.8.20417.9
             - name: Clone main repository
               run: |
                   git clone git://github.com/${{ github.repository_owner }}/flare.git
+            - name: Extract .NET version
+              id: dotnet
+              run: |
+                  echo ::set-output name=version::$(tail -n +2 flare/global.json | jq .sdk.version -r)
+            - name: Set up .NET
+              uses: actions/setup-dotnet@v1.6.0
+              with:
+                  dotnet-version: ${{ steps.dotnet.outputs.version }}
             - name: Run benchmarks
               run: |
                   dotnet run -p flare/src/bench -c Release -- -e
