@@ -70,4 +70,4 @@ jobs:
                   message_embed_authorurl: https://github.com/${{ github.repository_owner }}/flare/commit/${{ steps.update.outputs.sha }}
                   message_embed_title: "Benchmarks: Completed"
                   message_embed_titleurl: https://performance.flare-lang.org
-                  message_embed_description: Benchmark run has completed successfully.
+                  message_embed_description: Benchmark run #${{ github.run_number }} has completed successfully.
