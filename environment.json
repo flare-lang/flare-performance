@@ -1,0 +1,25 @@
+{
+  "Hardware": {
+    "Architecture": "X64",
+    "PhysicalProcessorCount": "1",
+    "PhysicalCoreCount": "2",
+    "LogicalCoreCount": "2",
+    "HardwareTimerKind": "Unknown",
+    "ChronometerResolution": "100",
+    "ChronometerFrequency": "10000000"
+  },
+  "OperatingSystem": {
+    "Version": "Windows 10.0.17763.1518 (1809/October2018Update/Redstone5)",
+    "Hypervisor": "None"
+  },
+  "Build": {
+    "DotNetSdkVersion": "5.0.100",
+    "BenchmarkDotNetVersion": "0.12.1",
+    "Configuration": "RELEASE"
+  },
+  "Runtime": {
+    "Version": ".NET Core 5.0.0 (CoreCLR 5.0.20.51904, CoreFX 5.0.20.51904)",
+    "IsServerGC": true,
+    "IsConcurrentGC": true
+  }
+}
