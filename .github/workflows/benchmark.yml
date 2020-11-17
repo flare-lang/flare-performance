@@ -53,7 +53,7 @@ jobs:
                   git push origin live
             - name: Notify Discord (environment)
               if: github.repository == 'flare-lang/flare-performance' && steps.update.outputs.changed == '1'
-              uses: hugoalh/GitHubAction.SendToDiscord@v3.0.1
+              uses: hugoalh/GitHubAction.SendToDiscord@v3.0.2
               with:
                   webhook_id: ${{ secrets.DISCORD_BENCHMARKS_ID }}
                   webhook_token: ${{ secrets.DISCORD_BENCHMARKS_TOKEN }}
@@ -62,7 +62,7 @@ jobs:
                   message_embed_description: The GitHub Actions environment appears to have changed. Benchmark history may need to be reset.
             - name: Notify Discord (completion)
               if: github.repository == 'flare-lang/flare-performance'
-              uses: hugoalh/GitHubAction.SendToDiscord@v1.1.6
+              uses: hugoalh/GitHubAction.SendToDiscord@v3.0.2
               with:
                   webhook_id: ${{ secrets.DISCORD_BENCHMARKS_ID }}
                   webhook_token: ${{ secrets.DISCORD_BENCHMARKS_TOKEN }}

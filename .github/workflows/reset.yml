@@ -24,7 +24,7 @@ jobs:
                   git push origin live -f
             - name: Notify Discord
               if: github.repository == 'flare-lang/flare-performance'
-              uses: hugoalh/GitHubAction.SendToDiscord@v3.0.1
+              uses: hugoalh/GitHubAction.SendToDiscord@v3.0.2
               with:
                   webhook_id: ${{ secrets.DISCORD_BENCHMARKS_ID }}
                   webhook_token: ${{ secrets.DISCORD_BENCHMARKS_TOKEN }}
