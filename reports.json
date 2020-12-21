@@ -1120,5 +1120,38 @@
         }
       }
     ]
+  },
+  {
+    "Timestamp": "1608511934",
+    "Commit": {
+      "Hash": "c3d5811c88db7bfc59ad9dcf7fcea6038028ab83",
+      "Subject": "Set ACTIONS_ALLOW_UNSECURE_COMMANDS=true.",
+      "Author": {
+        "Timestamp": "1605577578",
+        "Name": "Alex Rønne Petersen",
+        "MailAddress": "alex@alexrp.com"
+      },
+      "Committer": {
+        "Timestamp": "1605577578",
+        "Name": "Alex Rønne Petersen",
+        "MailAddress": "alex@alexrp.com"
+      }
+    },
+    "Reports": [
+      {
+        "Name": "LoadCoreModules",
+        "Success": true,
+        "Statistics": {
+          "Mean": "557.0",
+          "StdErr": "2.39",
+          "StdDev": "8.61",
+          "Min": "544.0",
+          "Median": "554.3",
+          "Max": "572.5",
+          "Iterations": "13.00",
+          "OperationsPerSecond": "1,795.2"
+        }
+      }
+    ]
   }
 ]
