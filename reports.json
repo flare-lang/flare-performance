@@ -1318,5 +1318,38 @@
         }
       }
     ]
+  },
+  {
+    "Timestamp": "1609030653",
+    "Commit": {
+      "Hash": "77bbcbb3042d018113e1e047168130e954250ba8",
+      "Subject": "Fix CLI option parsing in the benchmark runner.",
+      "Author": {
+        "Timestamp": "1608973332",
+        "Name": "Alex Rønne Petersen",
+        "MailAddress": "alex@alexrp.com"
+      },
+      "Committer": {
+        "Timestamp": "1608973332",
+        "Name": "Alex Rønne Petersen",
+        "MailAddress": "alex@alexrp.com"
+      }
+    },
+    "Reports": [
+      {
+        "Name": "LoadCoreModules",
+        "Success": true,
+        "Statistics": {
+          "Mean": "593.9",
+          "StdErr": "1.94",
+          "StdDev": "6.72",
+          "Min": "586.2",
+          "Median": "593.1",
+          "Max": "609.8",
+          "Iterations": "12.00",
+          "OperationsPerSecond": "1,683.9"
+        }
+      }
+    ]
   }
 ]
