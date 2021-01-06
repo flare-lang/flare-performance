@@ -1648,5 +1648,38 @@
         }
       }
     ]
+  },
+  {
+    "Timestamp": "1609894987",
+    "Commit": {
+      "Hash": "dcb4ea117ab358f31861d4be05712a989e310408",
+      "Subject": "Switch to NuGet central package version management.",
+      "Author": {
+        "Timestamp": "1609740943",
+        "Name": "Alex Rønne Petersen",
+        "MailAddress": "alex@alexrp.com"
+      },
+      "Committer": {
+        "Timestamp": "1609740943",
+        "Name": "Alex Rønne Petersen",
+        "MailAddress": "alex@alexrp.com"
+      }
+    },
+    "Reports": [
+      {
+        "Name": "LoadCoreModules",
+        "Success": true,
+        "Statistics": {
+          "Mean": "605.5",
+          "StdErr": "1.74",
+          "StdDev": "6.72",
+          "Min": "593.9",
+          "Median": "605.0",
+          "Max": "617.7",
+          "Iterations": "15.00",
+          "OperationsPerSecond": "1,651.4"
+        }
+      }
+    ]
   }
 ]
